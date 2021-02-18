@@ -1,0 +1,19 @@
+  // // add cube
+  // const cubeMesh = Mesh.CreateBox('cube',  2, scene)
+  // const cubeMat = new PBRMetallicRoughnessMaterial('cube-material', scene)
+  // cubeMat.baseColor = Color3.FromHexString('#ffcc44')
+  // cubeMat.metallic = 1
+  // cubeMat.roughness = 0.3
+  // cubeMesh.material = cubeMat
+  // cubeMesh.position = new Vector3(5, 0.75, 5)
+  
+  // // add cube
+  // const cubeMesh2 = Mesh.CreateBox('cube2', 2, scene)
+  // cubeMesh2.material = cubeMat
+  // cubeMesh2.position = new Vector3(8, 0.75, 5)
+  // cubeMesh2.rotation = new Vector3(0, Tools.ToRadians(45), 0);
+    
+  // // load a gltf model
+  // const container = await SceneLoader.LoadAssetContainerAsync('https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/', 'MetalRoughSpheres/glTF-Binary/MetalRoughSpheres.glb', scene)
+  // container.addAllToScene()
+  // container.meshes[0].position.x = 30
