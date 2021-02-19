@@ -6,11 +6,11 @@ DefaultLoadingScreen.prototype.displayLoadingUI = function () {
     {
       elemRoot.style.display = "none";
     }
-    var elemInstructions = document.getElementById("instructions");
-    if (elemInstructions)
-    {
-      elemInstructions.style.display = "none";
-    }
+    // var elemInstructions = document.getElementById("instructions");
+    // if (elemInstructions)
+    // {
+    //   elemInstructions.style.display = "none";
+    // }
   
     var elementID = document.getElementById("customLoadingScreenDiv1");
     if (elementID) {
@@ -48,10 +48,10 @@ DefaultLoadingScreen.prototype.displayLoadingUI = function () {
     {
       elemRoot.style.display = "initial";
     }
-    var elemInstru = document.getElementById("instructions");
-    if (elemInstru)
-    {
-      elemInstru.style.display = "initial";
-    }
+    // var elemInstru = document.getElementById("instructions");
+    // if (elemInstru)
+    // {
+    //   elemInstru.style.display = "initial";
+    // }
   }
   

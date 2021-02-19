@@ -17,3 +17,297 @@
   // const container = await SceneLoader.LoadAssetContainerAsync('https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/', 'MetalRoughSpheres/glTF-Binary/MetalRoughSpheres.glb', scene)
   // container.addAllToScene()
   // container.meshes[0].position.x = 30
+
+
+
+// function prepareLighting() {
+//   if (currentPluginName === "gltf") {
+//       if (!scene.environmentTexture) {
+//           scene.environmentTexture = EnvironmentTools.LoadSkyboxPathTexture(scene);
+//       }
+
+//       if (scene.environmentTexture) {
+//           scene.createDefaultSkybox(scene.environmentTexture, true, (_scene.activeCamera.maxZ - _scene.activeCamera.minZ) / 2, 0.3, false);
+//       }
+//   } else {
+//       var pbrPresent = false;
+//       for (const material of scene.materials) {
+//           if (material instanceof PBRBaseMaterial) {
+//               pbrPresent = true;
+//               break;
+//           }
+//       }
+
+//       if (pbrPresent) {
+//           if (!scene.environmentTexture) {
+//               scene.environmentTexture = EnvironmentTools.LoadSkyboxPathTexture(scene);
+//           }
+//       } else {
+//           scene.createDefaultLight();
+//       }
+//   }
+// }
+
+// function prepareCamera() {
+//   // Attach camera to canvas inputs
+//   if (!scene.activeCamera) {
+//       scene.createDefaultCamera(true);
+
+//       const camera = scene.activeCamera;      
+//       // if (camera === null)
+//       // {
+//       //   return;
+//       // }
+//       if (scene.loadingPluginName === "gltf") {
+//           // glTF assets use a +Z forward convention while the default camera faces +Z. Rotate the camera to look at the front of the asset.
+//           if (camera != null)
+//             camera.alpha += Math.PI;
+//       }
+
+//       // Enable camera's behaviors
+//       camera.useFramingBehavior = true;
+
+//       var framingBehavior = camera.getBehaviorByName("Framing");
+//       framingBehavior.framingTime = 0;
+//       framingBehavior.elevationReturnTime = -1;
+
+//       if (scene.meshes.length) {
+//           camera.lowerRadiusLimit = null;
+
+//           var worldExtends = scene.getWorldExtends(function (mesh) {
+//               return mesh.isVisible && mesh.isEnabled();
+//           });
+//           framingBehavior.zoomOnBoundingInfo(worldExtends.min, worldExtends.max);
+//       }
+
+//       // if (this.props.autoRotate) {
+//            camera.useAutoRotationBehavior = true;
+//       // }
+
+//       // if (this.props.cameraPosition) {
+//       //     camera.setPosition(this.props.cameraPosition);
+//       // }
+//       camera.radius = 1000;
+//       camera.pinchPrecision = 200 / camera.radius;
+//       camera.upperRadiusLimit = 5 * camera.radius;
+
+//       camera.wheelDeltaPercentage = 0.01;
+//       camera.pinchDeltaPercentage = 0.01;
+//   }
+
+//   scene.activeCamera.attachControl();
+// }
+
+const buildCar = () => {
+  const outline = [ new Vector3(-0.3, 0, -0.1),
+    new Vector3(0.2, 0, -0.1)];
+    for (let i = 0; i < 20; i++)
+    {
+      outline.push(new Vector3(0.2 * Math.cos(i * Math.PI/40), 0, 0.2 * Math.sin(i * Math.PI/40) - 0.1))
+    }
+    
+    outline.push(new Vector3(0, 0, 0.1));
+    outline.push(new Vector3(-0.3, 0, 0.1))
+    // outline.push(new Vector3(-0.3, 0, -0.1))
+    // const lines = Mesh.CreateLines("car_lines", outline);
+    const car = MeshBuilder.ExtrudePolygon("car", {shape : outline, depth : 0.2}, scene, require('earcut'));//, scene, undefined, undefined, undefined, require('earcut'));
+    const wheelRB = MeshBuilder.CreateCylinder("wheel", {height : 0.05, diameter : 0.125});
+    wheelRB.parent = car;
+    wheelRB.position = new Vector3(-0.1, 0.2, -0.035);
+    const wheelMat = new StandardMaterial("wheel", scene);
+    wheelMat.diffuseColor = Color3.Green()
+    wheelRB.material = wheelMat;
+    car.material = wheelMat;
+    
+    // lines.color = Color3.Black()
+    return car;
+}
+
+const buildHouse = () => {
+  const box = buildRoof();
+  const roof = buildBox();
+  return Mesh.MergeMeshes([box, roof], true, false, undefined, false, true);
+}
+
+function buildDwellings() {
+  const house = buildHouse();
+  if (house != null) {
+    house.rotation.y = -Math.PI / 16;
+    house.position.x = -4.5;
+    house.position.z = 3;
+  }
+  const places = []; //each entry is an array [house type, rotation, x, z]
+  places.push([-Math.PI / 16, -6.8, 2.5]);
+  places.push([-Math.PI / 16, -4.5, 3]);
+  places.push([-Math.PI / 16, -1.5, 4]);
+  places.push([-Math.PI / 3, 1.5, 6]);
+  places.push([15 * Math.PI / 16, -6.4, -1.5]);
+  places.push([15 * Math.PI / 16, -4.1, -1]);
+  places.push([15 * Math.PI / 16, -2.1, -0.5]);
+  places.push([5 * Math.PI / 4, 0, -1]);
+  places.push([Math.PI + Math.PI / 2.5, 0.5, -3]);
+  places.push([Math.PI + Math.PI / 2.1, 0.75, -5]);
+  places.push([Math.PI + Math.PI / 2.25, 0.75, -7]);
+  places.push([Math.PI / 1.9, 4.75, -1]);
+  places.push([Math.PI / 1.95, 4.5, -3]);
+  places.push([Math.PI / 1.9, 4.75, -5]);
+  places.push([Math.PI / 1.9, 4.75, -7]);
+  places.push([-Math.PI / 3, 5.25, 2]);
+  places.push([-Math.PI / 3, 6, 4]);
+
+  const houses = [];
+  for (let i = 0; i < places.length; i++) {
+    if (house != null) {
+      houses[i] = house.createInstance("house" + i);
+      houses[i].position.x = places[i][1] * 4.5;
+      houses[i].position.z = places[i][2] * 4.5;
+      houses[i].rotation.y = places[i][0];
+    }
+  }
+}
+
+function buildBox() {
+  const boxMat = new StandardMaterial("boxMat", scene);
+  boxMat.diffuseTexture = new Texture("https://assets.babylonjs.com/environments/cubehouse.png", scene);
+
+  //options parameter to set different images on each side
+  const faceUV = [];
+  faceUV[0] = new Vector4(0.5, 0.0, 0.75, 1.0); //rear face
+  faceUV[1] = new Vector4(0.0, 0.0, 0.25, 1.0); //front face
+  faceUV[2] = new Vector4(0.25, 0, 0.5, 1.0); //right side
+  faceUV[3] = new Vector4(0.75, 0, 1.0, 1.0); //left side
+
+
+  // top 4 and bottom 5 not seen so not set
+  // const box = Mesh.CreateBox("box", 0.8, scene)
+  const box = MeshBuilder.CreateBox("box", { faceUV: faceUV, wrap: true });
+
+  box.position.y = 4;
+  box.scaling.x = 5;
+  box.scaling.y = 6.5;
+  box.scaling.z = 5;
+  box.material = boxMat;
+  return box
+}
+
+function buildRoof() {
+  const roof = Mesh.CreateCylinder("roof", 0.9, 1, 1, 3, scene);
+  roof.scaling.x = 7;
+  roof.scaling.y = 6;
+  roof.scaling.z = 7;
+  roof.rotation.z = Math.PI / 2;
+  roof.position.y = 8.5;
+  //const roof = BABYLON.MeshBuilder.CreateCylinder("roof", {diameter: 1.3, height: 1.2, tessellation: 3});
+  const roofMat = new StandardMaterial("root_material", scene);
+  roofMat.diffuseTexture = new Texture("https://assets.babylonjs.com/environments/roof.jpg", scene);
+  roof.material = roofMat;
+  return roof
+}
+
+function buildGround() {
+  const groundMesh = Mesh.CreatePlane('ground', 80, scene);
+  // const groundMat = new PBRMetallicRoughnessMaterial('ground-material', scene)
+  // groundMat.baseColor = new Color3(0.1, 0.5, 0.1)
+  // groundMat.metallic = 0
+  // groundMat.roughness = 0.6
+  const groundMat = new StandardMaterial("grass_mat", scene);
+  groundMat.diffuseColor = Color3.Green();
+  groundMat.backFaceCulling = false;
+  groundMat.freeze(); // freeze the ground material for better performance
+
+  groundMesh.material = groundMat;
+  groundMesh.rotation = new Vector3(Math.PI / 2, 0, 0);
+  // groundMesh.freezeWorldMatrix();
+
+}
+
+
+//   SceneLoader.Append("./models/", "Plan_Bibliotheque_Mtp_Compress.glb", scene, function (scene) {
+    
+//     const whole_plan_mesh = scene.getMeshByName("Sol");
+//     if (whole_plan_mesh != null)
+//     {
+//       cam.focusOn([whole_plan_mesh], true);
+//       cam.zoomOn([whole_plan_mesh], true);
+//       engine.hideLoadingUI();
+//     }
+//   },
+//   function (evt) {
+//     // onProgress
+//     var loadedPercent;
+//     if (evt.lengthComputable) {
+//         loadedPercent = (evt.loaded * 100 / evt.total).toFixed();
+//     } else {
+//         var dlCount = evt.loaded / (1024 * 1024);
+//         loadedPercent = (Math.floor(dlCount * 100.0) / 100.0).toFixed();
+//     }
+//     // // assuming "loadingScreenPercent" is an existing html element
+//     //  const elem = document.getElementById("loadedPercentText");
+//     // if (elem)
+//     //   elem.innerHTML = loadedPercent;
+// });
+
+//   const whole_plan_meshes = SceneLoader.ImportMeshAsync("", "./models/", "Plan_Bibliotheque_Mtp_Compress.glb").then((result) => {
+//     // result.meshes[1].position.x = 20;
+//     // myMesh1.rotation.y = Math.PI / 2;
+//     if (cam != null)
+//     {
+//       // cam.focusOn([car], true);
+//       //cam.zoomOn([car], true);
+//       // const selectedMeshToFocus = null;
+//       // for(let iMesh = 0; iMesh < result.meshes.length; iMesh++)
+//       // {
+//       //   const boundingBox = result.meshes[iMesh].getHierarchyBoundingVectors();
+//       //   if (selectedMeshToFocus == null)
+//       //   {
+//       //     selectedMeshToFocus = result.meshes[iMesh];
+          
+//       //   }
+//       // }
+//       const whole_plan_mesh = scene.getMeshByName("Sol");
+//       if (whole_plan_mesh != null)
+//       {
+//         // const boundingBox = whole_plan_mesh.getHierarchyBoundingVectors();
+//         // const maxBound = boundingBox.max;
+//         // const minBound = boundingBox.min;
+//         // cam.target = maxBound;
+//         // cam.minZ = Math.max(minBound.x, minBound.y, minBound.z);  //maxBound.z;
+//         // cam.maxZ = Math.max(maxBound.x, maxBound.y, maxBound.z); //maxBound.z;
+//         cam.focusOn([whole_plan_mesh], true);
+//         // cam.zoomOn(result.meshes, true);
+//         cam.zoomOn([whole_plan_mesh], true);
+  
+//         // camera.lowerRadiusLimit = Math.max(maxBound.x, maxBound.y, maxBound.z); //2 // how close can you zoom
+//         // camera.upperRadiusLimit = 100 // how far out can you zoom
+//         // camera.lowerBetaLimit = 0.2 // how high can you move the camera
+//         // camera.upperBetaLimit = 1.1 // how low down can you move the camera
+        
+//         // camera.checkCollisions = true // make the camera collide with meshes
+//         // camera.collisionRadius = new Vector3(2, 2, 2) // how close can the camera go to other meshes
+    
+//       }
+//     }
+//   },
+//   function (evt) {
+//     // onProgress
+//     var loadedPercent;
+//     if (evt.lengthComputable) {
+//         loadedPercent = (evt.loaded * 100 / evt.total).toFixed();
+//     } else {
+//         var dlCount = evt.loaded / (1024 * 1024);
+//         loadedPercent = Math.floor(dlCount * 100.0) / 100.0;
+//     }
+//     // assuming "loadingScreenPercent" is an existing html element
+//     // document.getElementById("loadingScreenPercent").innerHTML = loadedPercent;
+// }
+
+//   );
+  // const boundingBox = car.getHierarchyBoundingVectors();
+  // const maxBound = boundingBox.max;
+  
+  // Camera cam = scene.activeCamera;
+
+  // scene.onPointerDown = function(evt, pickInfo) {
+  //   if(pickInfo.hit) {
+  //       cam.focusOn([pickInfo.pickedMesh], true);
+  //   }
