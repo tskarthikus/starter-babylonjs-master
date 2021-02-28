@@ -8,13 +8,15 @@ import { Vector3 } from '@babylonjs/core/Maths';
 import { CubeTexture } from '@babylonjs/core/Materials/Textures';
 import "@babylonjs/core/Helpers/sceneHelpers";
 import './loadingScreen';
+import { SceneLoader } from '@babylonjs/core/Loading/sceneLoader';
+import { Camera } from '@babylonjs/core/Cameras/camera';
 
 export let canvas: HTMLCanvasElement
 export let engine: Engine
 export let scene: Scene
 export let camera: ArcRotateCamera
 let handleResize: any
-
+export let currentPluginName: any
 
 export const createEngine = (hostCanvas: HTMLCanvasElement) => {
   canvas = hostCanvas
@@ -47,6 +49,11 @@ export const createScene = () => {
     }
   })
 
+  SceneLoader.OnPluginActivatedObservable.add(function(plugin) {
+      currentPluginName = plugin.name;
+      console.info("Plugin name = " + currentPluginName);
+  });
+
   return scene
 }
 
@@ -56,7 +63,9 @@ export const createArcRotateCamera = () => {
     const startRadius = 100
     const startPosition = new Vector3(0, 1, 0)
     //const camera = new ArcRotateCamera('camera', startAlpha, startBeta, startRadius, startPosition, scene, true)
-    const camera = new ArcRotateCamera('camera', -Math.PI/2, Math.PI/2, 3, new Vector3(0, 0, 0), scene);
+    // const camera = new ArcRotateCamera('camera', -Math.PI/2, Math.PI/2, 3, new Vector3(0, 0, 0), scene);
+    // Keep alpha and beta to minimal to have top view.
+    const camera = new ArcRotateCamera('camera1', -0.001, 0.0001, 50, new Vector3(0, 0, 0), scene);
     camera.attachControl(canvas, true)
 
     // Set some basic camera settings
@@ -71,7 +80,7 @@ export const createArcRotateCamera = () => {
     camera.allowUpsideDown = false // don't allow zooming inverted
     camera.lowerRadiusLimit = 2 // how close can you zoom
     camera.upperRadiusLimit = 100 // how far out can you zoom
-    camera.lowerBetaLimit = 0.2 // how high can you move the camera
+    camera.lowerBetaLimit = 0.0001 // how high can you move the camera
     camera.upperBetaLimit = Math.PI / 2.5 // how low down can you move the camera
     
     camera.checkCollisions = true // make the camera collide with meshes
@@ -79,7 +88,6 @@ export const createArcRotateCamera = () => {
 
     camera.wheelPrecision = 50;
     camera.pinchPrecision = 50;
-
     return camera
 }
 
@@ -93,3 +101,38 @@ export const createPBRSkybox = () => {
   return skyboxMesh
 }
 
+export const setOrthoView = () => {
+  const cam = scene.activeCamera;
+  if (cam != null)
+  {
+    cam.mode = Camera.ORTHOGRAPHIC_CAMERA;
+    var distance = 50;	
+    const engine = scene.getEngine();
+    const clientRect = engine.getRenderingCanvasClientRect();
+    if (engine != null && clientRect != null)
+    {
+      var aspect = clientRect.height / clientRect.width; 
+      cam.orthoLeft = -distance/2;
+      cam.orthoRight = distance / 2;
+      cam.orthoBottom = cam.orthoLeft * aspect;
+      cam.orthoTop = cam.orthoRight * aspect;
+    }
+  }
+}
+export const setCenterAsTarget = (result : any, cam : ArcRotateCamera) => {
+    if (result.meshes.length) {
+        var worldExtends = scene.getWorldExtends();
+      
+      // Find center of worldExtends (all meshes)      
+      let center = worldExtends.min.add(worldExtends.max).divideInPlace(new Vector3(2,2,2));
+      cam.target.copyFrom(center)
+
+      // Fix camera angles.
+      // cam.alpha = cam.beta = Math.PI / 2;
+      cam.alpha = -0.001;
+      cam.beta = 0.001;
+
+      // Calculate lowerRadiusLimit & add camera.minZ to avoid clipping.
+      cam.lowerRadiusLimit = Vector3.Distance(center, worldExtends.min) + cam.minZ;
+    }
+  }
