@@ -6,6 +6,12 @@ DefaultLoadingScreen.prototype.displayLoadingUI = function () {
     {
       elemRoot.style.display = "none";
     }
+    var toolBarElem = document.getElementById("button");
+    if (toolBarElem)
+    {
+      toolBarElem.style.display = "none";
+    }
+    
     // var elemInstructions = document.getElementById("instructions");
     // if (elemInstructions)
     // {
@@ -21,7 +27,8 @@ DefaultLoadingScreen.prototype.displayLoadingUI = function () {
     
     const loadingDiv = document.createElement("div");
     loadingDiv.id = "customLoadingScreenDiv1";
-    loadingDiv.innerHTML = '<img src=https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Loadingsome.gif/600px-Loadingsome.gif />'    
+    // loadingDiv.innerHTML = '<img src=https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Loadingsome.gif/200px-Loadingsome.gif />'    
+    loadingDiv.innerHTML = '<img src=css/giphy_bar_crop.gif />'    
     var customLoadingScreenCss = document.createElement('style');
     customLoadingScreenCss.type = 'text/css';
     customLoadingScreenCss.innerHTML = `
@@ -48,10 +55,10 @@ DefaultLoadingScreen.prototype.displayLoadingUI = function () {
     {
       elemRoot.style.display = "initial";
     }
-    // var elemInstru = document.getElementById("instructions");
-    // if (elemInstru)
-    // {
-    //   elemInstru.style.display = "initial";
-    // }
+    var toolBarElem = document.getElementById("button");
+    if (toolBarElem)
+    {
+      toolBarElem.style.display = "initial";
+    }
   }
   

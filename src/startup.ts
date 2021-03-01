@@ -58,10 +58,10 @@ export const createScene = () => {
 }
 
 export const createArcRotateCamera = () => {
-    const startAlpha = -1.5
-    const startBeta = 1.4
-    const startRadius = 100
-    const startPosition = new Vector3(0, 1, 0)
+    // const startAlpha = -1.5
+    // const startBeta = 1.4
+    // const startRadius = 100
+    // const startPosition = new Vector3(0, 1, 0)
     //const camera = new ArcRotateCamera('camera', startAlpha, startBeta, startRadius, startPosition, scene, true)
     // const camera = new ArcRotateCamera('camera', -Math.PI/2, Math.PI/2, 3, new Vector3(0, 0, 0), scene);
     // Keep alpha and beta to minimal to have top view.
@@ -86,7 +86,7 @@ export const createArcRotateCamera = () => {
     camera.checkCollisions = true // make the camera collide with meshes
     camera.collisionRadius = new Vector3(2, 2, 2) // how close can the camera go to other meshes
 
-    camera.wheelPrecision = 50;
+    camera.wheelPrecision = 25;
     camera.pinchPrecision = 50;
     return camera
 }

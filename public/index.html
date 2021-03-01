@@ -7,16 +7,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
   <meta name="theme-color" content="#000000" />
   <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-  <title>Babylon Starter</title>
+  <!-- <script src="css/toolbar/jquery.toolbar.js"></script>
+  <link href="css/toolbar/jquery.toolbar.css" rel="stylesheet" /> -->
+  <!-- <script src="css/toolbar/jquery.toolbar.js"></script> -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+  <script src="https://paulkinzett.github.io/toolbar/js/jquery.toolbar.min.js"></script>
+  <link href="https://paulkinzett.github.io/toolbar/css/documentation.css" rel="stylesheet" />
+  <link href="https://paulkinzett.github.io/toolbar/css/jquery.toolbar.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" />
+  <!-- <script src="https://kit.fontawesome.com/ceff1986e7.js" crossorigin="anonymous"></script> -->
+  <title>3DDD view</title>
 
   <!-- Place root styles here so that they are loaded quickly-->
   <style>
     html, body {
-        overflow: hidden;
-        width: 100%;
-        height: 100%;
-        margin: 0;
-        padding: 0;
+        text-align: center;
     }
 
     #root {
@@ -27,24 +32,54 @@
     }
 
     #holder {
-        width: 100%;
+        width: 98%;
         height: 100%;
         float: left;
+        display: "block";
+    }
+    #button {
+        /* width: 2%; */
+        /* height: 5%; */
+        float: right;
         display: "block";
     }
 
 </style>
 </head>
 
-<body>
-  <!-- <div id="loadingScreen">
-    <div class="content">
-      <h4><img src="css/giphy_bar_crop.gif"></h4>
-    </div>    
-  </div> -->
+<body>  
+  <div data-toolbar="toolbar-options" data-toolbar-animation="standard" 
+  class="btn-toolbar feature-toolbar btn-toolbar-success text-center" 
+  data-toolbar-style="primary" id="button">
+  <i class="fa fa-cog" style="position: relative"></i>
+</div>
+
   <div id="holder">
     <canvas id="root" touch-action="none"></canvas> <!-- touch-action="none" for best results from PEP -->    
   </div>
+
+  <div id="toolbar-options" class="hidden">
+    <a href="#" id="plane"><i class="fa fa-plane"></i></a>
+    <a href="#" id="car"><i class="fa fa-car"></i></a>
+    <a href="#" id="bycicle"><i class="fa fa-bicycle"></i></a>
+ </div>
+ <script>
+     $('#button').toolbar({
+      content: '#toolbar-options',
+      position: 'left',
+      style: 'primary',
+      event: 'click',
+      hideOnClick: true
+    });
+
+    $('#button').on('toolbarItemClick',
+      function(event, buttonClicked) {
+        $(this).trigger('click'); //trigger click = close on select
+        alert(buttonClicked.id)
+      }
+    ); 
+ </script>
+
 </body>
 
 </html>
