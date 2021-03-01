@@ -1,0 +1,21 @@
+1.  Show menu items 
+2.  Initially focus camera on orthographic view
+3.  Menu item1 : Hide furniture meshes on menu item click
+5.  On pick any mesh, change focus to it.
+
+
+I think the background should be a realistic natural background as seen in Lumion 3D.
+
+-----------------------------------
+
+1.  Bring javascript toolbar (top right with padding)
+	1. Show furnitures
+	2. Show top view
+	3. Walk-thru animation
+
+
+2.  Load wall mesh first followed by furnitures asynchronously
+3.  Lighting with ivory shade
+4.  Embed the glb in Js
+
+
